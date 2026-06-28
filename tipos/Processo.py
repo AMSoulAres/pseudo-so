@@ -24,9 +24,8 @@ class Processo:
     prioridade_atual: int = field(init=False)
     page_faults: int = 0
     tempo_espera: int = 0
-    paginas_alocadas: list[int] = field(default_factory=list)
     frames: int = 0
-    is_tempo_real: bool = field(init=False)
+
 
     def __post_init__(self) -> None:
         self.prioridade_atual = self.prioridade # atribui prioridade inicial
@@ -53,11 +52,4 @@ class Processo:
 
     def desbloquear(self) -> None:
         self.estado = EstadoProcesso.PRONTO
-    
-    def __repr__(self) -> str:
-        return (
-            f"Processo(pid={self.pid}, prio={self.prioridade_atual}, "
-            f"estado={self.estado.name}, "
-            f"cpu={self.tempo_executado}/{self.tempo_processador}, "
-            f"req={self.is_request_recursos})"
-        )
+

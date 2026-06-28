@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from modules import gerenciador_filas
-from modules import gerenciador_filas
 import sys
 from pathlib import Path
 from typing import Optional
@@ -31,10 +29,6 @@ def carregar_processos(caminho_arquivo: str) -> list[Processo]:
             file=sys.stderr,
         )
 
-   #Teste TODO: APAGAR
-    for processo in processos:
-        print(processo)
-
     return processos
 
 def carregar_refs_paginas(caminho_arquivo: str) -> list[int]:
@@ -51,22 +45,22 @@ def carregar_refs_paginas(caminho_arquivo: str) -> list[int]:
             clean_line: str = linha.strip()
             if not clean_line or clean_line.startswith("#"):
                 continue
-    try:
-        paginas: list[int] = [
+            try:
+                paginas: list[int] = [
                     int(ref.strip())
                     for ref in clean_line.split(",")
                     if ref.strip()
                 ]
-        referencias_por_pid[pid] = paginas
-        pid += 1
-    except ValueError:
-        print(
-            f"[WARN] Formato inválido na linha {pid + 1} "
+                referencias_por_pid[pid] = paginas
+                pid += 1
+            except ValueError:
+                print(
+                    f"[WARN] Formato inválido na linha {pid + 1} "
                     f"do arquivo de referências: '{path}'.",
-            file=sys.stderr,
-        )
-        referencias_por_pid[pid] = []
-        pid += 1
+                    file=sys.stderr,
+                )
+                referencias_por_pid[pid] = []
+                pid += 1
 
     return referencias_por_pid
 
