@@ -4,6 +4,8 @@ from helpers.parsers import DadosSistemaArquivos
 from typing import Optional
 from services.FilaService import FilaService
 from services.ProcessosService import ProcessosService
+from services.ArquivosService import ArquivosService
+from tipos.EstadoProcesso import EstadoProcesso
 from tipos.Processo import Processo
 
 MAX_TICKS: int = 1_000_000
@@ -18,26 +20,24 @@ class Dispatcher:
         dados_sistema_arquivos: Optional[DadosSistemaArquivos]
         ) -> None:
         # Ordena processos por ordem de "chegada" (parametrizada no arquivo lido)
-        self.processos_pendentes: list[Processo] = sorted(processos, key=lambda p: p.tempo_inicializacao)
+        self.processos_pendentes: list[Processo] = sorted(
+            processos, key=lambda p: p.tempo_inicializacao
+        )
+        # Dicionário guardando a referência para todos os processos para uso do sistema de arquivos
+        self.todos_processos: dict[int, Processo] = {p.pid: p for p in processos}
 
-        # Injeta services
         self.fila_service: FilaService = FilaService()
+        self.recurso_service: RecursoService = RecursoService()
         self.memoria_service: MemoriaService = MemoriaService()
-        self.arquivos_service = None # TODO: Implementar
-        self.recursos_service: RecursoService = RecursoService()
-        self.processos_service: ProcessosService = ProcessosService(
+
+        self.processos_service = ProcessosService(
             self.fila_service,
             self.memoria_service,
-            self.recursos_service)
+            self.recurso_service
+        )
         self.processos_service.referencias_paginas = referencias_paginas
 
-        self.operacoes_por_pid: dict[int, list[tuple[int, int, str, int]]] = {}
-        if dados_sistema_arquivos:
-            for op in dados_sistema_arquivos.operacoes:
-                pid_op = op[0]
-                if pid_op not in self.operacoes_por_pid:
-                    self.operacoes_por_pid[pid_op] = []
-                self.operacoes_por_pid[pid_op].append(op)
+        self.arquivos_service = ArquivosService(dados_sistema_arquivos)
 
         self.tick: int = 0
         # Qquais processos já tiveram o "dispatcher =>" impresso
@@ -115,10 +115,10 @@ class Dispatcher:
         """Exibe o resumo da simulação após a conclusão."""
         finalizados: list[Processo] = self.processos_service.processos_finalizados
 
-        # TODO: Sistema de arquivos
-        # print("Sistema de arquivos =>")
-
         print()
+        print("============================================================")
+        print("Sistema de arquivos =>")
+        self.arquivos_service.executar_operacoes(self.todos_processos)
         print("=" * 60)
         print("  SIMULAÇÃO CONCLUÍDA")
         print("=" * 60)
