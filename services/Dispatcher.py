@@ -118,16 +118,14 @@ class Dispatcher:
         print()
         print("============================================================")
         print("Sistema de arquivos =>")
+        # Executa as operações e desenha o mapa de ocupação do disco automaticamente
         self.arquivos_service.executar_operacoes(self.todos_processos)
         print("=" * 60)
-        print("  SIMULAÇÃO CONCLUÍDA")
+        print("   SIMULAÇÃO CONCLUÍDA")
         print("=" * 60)
-        print(f"  Total de ticks: {self.tick}")
-        print(f"  Processos finalizados: {len(finalizados)}")
+        print(f"   Total de ticks: {self.tick}")
+        print(f"   Processos finalizados: {len(finalizados)}")
         print()
-
-        # Mapa de disco (TODO: implementar com ArquivoService)
-        # print("Mapa de ocupação do disco:")
 
         # Page faults por processo
         print("Número de Faltas de Páginas por processo:")

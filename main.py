@@ -1,6 +1,7 @@
 from services.Dispatcher import Dispatcher
 from tipos.Processo import Processo
-from helpers.parsers import carregar_processos, carregar_refs_paginas, carregar_ops_arquivos
+from typing import Optional
+from helpers.parsers import carregar_processos, carregar_refs_paginas, carregar_ops_arquivos, DadosSistemaArquivos
 import sys
 
 def main() -> None:
@@ -22,7 +23,7 @@ def main() -> None:
         sys.exit(0)
 
     referencias_paginas: dict[int, list[int]] = carregar_refs_paginas(caminho_string)
-    dados_sistema_arquivos: list[dict[str, object]] = carregar_ops_arquivos(caminho_arquivos)
+    dados_sistema_arquivos: Optional[DadosSistemaArquivos] = carregar_ops_arquivos(caminho_arquivos)
 
     dispatcher: Dispatcher = Dispatcher(processos, referencias_paginas, dados_sistema_arquivos)
     dispatcher.main_loop()

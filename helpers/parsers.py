@@ -31,11 +31,10 @@ def carregar_processos(caminho_arquivo: str) -> list[Processo]:
 
     return processos
 
-def carregar_refs_paginas(caminho_arquivo: str) -> list[int]:
-    # TODO: REVISAR (DEVE TA ERRADO)
+def carregar_refs_paginas(caminho_arquivo: str) -> dict[int, list[int]]: # <- Ajustado o retorno
     path = Path(caminho_arquivo)
     if not path.is_file():
-        return {}
+        return {} # <- Corrigido para retornar dict vazio em vez de list
 
     referencias_por_pid: dict[int, list[int]] = {}
     pid: int = 0
@@ -64,9 +63,7 @@ def carregar_refs_paginas(caminho_arquivo: str) -> list[int]:
 
     return referencias_por_pid
 
-def carregar_ops_arquivos(caminho_arquivo: str) -> list[dict[str, object]]:
-
-    # TODO: REVISAR (DEVE TA ERRADO)
+def carregar_ops_arquivos(caminho_arquivo: str) -> Optional['DadosSistemaArquivos']: # <- Ajustado o retorno
     caminho: Path = Path(caminho_arquivo)
 
     if not caminho.is_file():
